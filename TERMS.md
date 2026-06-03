@@ -6,7 +6,7 @@ These terms apply to the Video Downloader source code, packaged builds, and rela
 
 ## No Affiliation
 
-Video Downloader is an independent open-source project. It is not affiliated with, endorsed by, sponsored by, or approved by YouTube, Google, LinkedIn, Microsoft, yt-dlp, FFmpeg, or any other video platform or third-party project.
+Video Downloader is an independent open-source project. It is not affiliated with, endorsed by, sponsored by, or approved by any website, service, tool vendor, or third-party project.
 
 ## Acceptable Use
 
@@ -15,7 +15,7 @@ You may use this software only for content that you own, have permission to save
 You agree not to use this software to:
 
 - Infringe copyrights or other intellectual property rights.
-- Violate platform terms, website terms, or applicable law.
+- Violate website terms, service terms, or applicable law.
 - Bypass DRM, paywalls, private access controls, login restrictions, encryption, or technical protection measures.
 - Download, redistribute, or monetize content without the required rights or permissions.
 - Interfere with or overload third-party services.
@@ -28,7 +28,7 @@ You are solely responsible for:
 
 - The URLs you download.
 - The files you create, store, share, or redistribute.
-- Your compliance with copyright law, local law, platform rules, and third-party terms.
+- Your compliance with copyright law, local law, website rules, service rules, and third-party terms.
 - Any consequences from your use or misuse of this software.
 
 The maintainers do not review, approve, host, or control the content you download.
@@ -43,7 +43,7 @@ To the maximum extent allowed by law, the maintainers and contributors are not l
 
 ## Third-Party Services and Tools
 
-The software uses third-party tools and services, including yt-dlp and FFmpeg-related packages. Those projects are governed by their own licenses and terms. Websites and platforms may change, block, or restrict downloads at any time.
+The software uses third-party tools and services, including downloader and media-processing packages. Those projects are governed by their own licenses and terms. Websites and services may change, block, or restrict downloads at any time.
 
 ## No Legal Advice
 

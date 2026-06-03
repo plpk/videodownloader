@@ -25,7 +25,7 @@ export function StatusStrip({
       <span>{totalJobs} total</span>
       <span>{activeJobs} active</span>
       <span>{completedJobs} completed</span>
-      <span>{toolStatus?.ffmpegPath ? 'ffmpeg available' : 'ffmpeg missing'}</span>
+      <span>{toolStatus?.ffmpegPath ? 'Media tool available' : 'Media tool missing'}</span>
     </footer>
   );
 }

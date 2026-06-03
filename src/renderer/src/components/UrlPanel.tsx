@@ -44,7 +44,7 @@ export function UrlPanel({
         className="url-input"
         value={urlInput}
         spellCheck={false}
-        placeholder="https://www.youtube.com/watch?v=...&#10;https://www.linkedin.com/posts/..."
+        placeholder="https://example.com/video/123&#10;https://media.example.org/watch/abc"
         onChange={(event) => onUrlInputChange(event.target.value)}
       />
 

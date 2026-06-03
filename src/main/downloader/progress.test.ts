@@ -24,6 +24,6 @@ describe('parseProgressLine', () => {
   });
 
   it('returns null for unrelated output', () => {
-    expect(parseProgressLine('[youtube] Extracting URL: https://youtu.be/abc123')).toBeNull();
+    expect(parseProgressLine('[extractor] Extracting URL: https://example.com/watch/abc123')).toBeNull();
   });
 });

@@ -15,7 +15,7 @@ export function Header({ toolStatus, activeJobs }: HeaderProps): JSX.Element {
         </div>
         <div>
           <h1>Video Downloader</h1>
-          <p>YouTube, LinkedIn, and supported public web videos</p>
+          <p>Supported public and user-accessible web videos</p>
         </div>
       </div>
 
@@ -26,7 +26,7 @@ export function Header({ toolStatus, activeJobs }: HeaderProps): JSX.Element {
         </span>
         <span className={toolStatus?.ytDlpInstalled ? 'status-pill ready' : 'status-pill warning'}>
           <Wrench size={15} />
-          {toolStatus?.ytDlpInstalled ? 'yt-dlp ready' : 'yt-dlp needed'}
+          {toolStatus?.ytDlpInstalled ? 'Tool ready' : 'Tool needed'}
         </span>
       </div>
     </header>
