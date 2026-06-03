@@ -4,8 +4,22 @@
   "description": "Polished Windows desktop downloader for public and user-accessible videos.",
   "main": "dist/main/index.js",
   "author": "Louis",
-  "license": "UNLICENSED",
-  "private": true,
+  "license": "GPL-3.0-or-later",
+  "keywords": [
+    "video-downloader",
+    "youtube",
+    "yt-dlp",
+    "electron",
+    "windows"
+  ],
+  "homepage": "https://github.com/plpk/videodownloader#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plpk/videodownloader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/plpk/videodownloader/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "electron-vite dev",
