@@ -2,6 +2,8 @@
 
 This project depends on third-party software. Each dependency remains governed by its own license.
 
+This notice intentionally names dependencies for license attribution. User-facing product copy should remain generic and avoid naming specific video or social websites.
+
 ## Runtime and Major Tooling
 
 - [Electron](https://www.electronjs.org/) - MIT License

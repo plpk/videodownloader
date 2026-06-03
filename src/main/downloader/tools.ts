@@ -7,6 +7,13 @@ import type { ToolStatus } from '../../shared/types';
 
 const ytDlpDownloadUrl = 'https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe';
 
+type DownloadFile = (url: string, destination: string) => Promise<void>;
+
+interface EnsureYtDlpOptions {
+  force?: boolean;
+  downloadFile?: DownloadFile;
+}
+
 export function getToolsDir(userDataDir: string): string {
   return join(userDataDir, 'tools');
 }
@@ -33,17 +40,18 @@ export async function getToolStatus(userDataDir: string): Promise<ToolStatus> {
   };
 }
 
-export async function ensureYtDlp(userDataDir: string): Promise<string> {
+export async function ensureYtDlp(userDataDir: string, options: EnsureYtDlpOptions = {}): Promise<string> {
   const ytDlpPath = getYtDlpPath(userDataDir);
 
-  if (await fileExists(ytDlpPath)) {
+  if (!options.force && (await fileExists(ytDlpPath))) {
     return ytDlpPath;
   }
 
   await mkdir(dirname(ytDlpPath), { recursive: true });
   const tempPath = `${ytDlpPath}.download`;
   await rm(tempPath, { force: true });
-  await downloadFile(ytDlpDownloadUrl, tempPath);
+  await (options.downloadFile ?? downloadFile)(ytDlpDownloadUrl, tempPath);
+  await rm(ytDlpPath, { force: true });
   await rename(tempPath, ytDlpPath);
   return ytDlpPath;
 }
@@ -59,7 +67,7 @@ async function fileExists(path: string): Promise<boolean> {
 
 async function downloadFile(url: string, destination: string, redirectCount = 0): Promise<void> {
   if (redirectCount > 5) {
-    throw new Error('Too many redirects while downloading yt-dlp.');
+    throw new Error('Too many redirects while downloading the download tool.');
   }
 
   await new Promise<void>((resolve, reject) => {
@@ -75,7 +83,7 @@ async function downloadFile(url: string, destination: string, redirectCount = 0)
 
       if (status < 200 || status >= 300) {
         response.resume();
-        reject(new Error(`Could not download yt-dlp. HTTP ${status}.`));
+        reject(new Error(`Could not download the download tool. HTTP ${status}.`));
         return;
       }
 

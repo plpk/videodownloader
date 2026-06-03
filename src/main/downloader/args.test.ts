@@ -4,7 +4,7 @@ import { buildDownloadArgs } from './args';
 describe('buildDownloadArgs', () => {
   it('builds best-video args for a public single video', () => {
     const args = buildDownloadArgs({
-      url: 'https://www.youtube.com/watch?v=abc123',
+      url: 'https://example.com/watch/abc123',
       outputDir: 'C:\\Videos',
       quality: 'best',
       playlist: false,
@@ -21,12 +21,12 @@ describe('buildDownloadArgs', () => {
     expect(args).toContain('mp4');
     expect(args).toContain('bv*+ba/b');
     expect(args).not.toContain('--cookies-from-browser');
-    expect(args.at(-1)).toBe('https://www.youtube.com/watch?v=abc123');
+    expect(args.at(-1)).toBe('https://example.com/watch/abc123');
   });
 
   it('caps video height and enables browser cookies when requested', () => {
     const args = buildDownloadArgs({
-      url: 'https://www.linkedin.com/posts/example',
+      url: 'https://media.example.org/posts/example',
       outputDir: 'D:\\Clips',
       quality: '1080',
       playlist: true,
@@ -48,7 +48,7 @@ describe('buildDownloadArgs', () => {
 
   it('uses extraction flags for audio-only downloads', () => {
     const args = buildDownloadArgs({
-      url: 'https://youtu.be/abc123',
+      url: 'https://video.example.net/abc123',
       outputDir: 'C:\\Audio',
       quality: 'audio',
       playlist: false,

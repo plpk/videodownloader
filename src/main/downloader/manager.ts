@@ -9,6 +9,7 @@ type EventSink = (event: DownloadEvent) => void;
 
 export class DownloaderManager {
   private readonly activeProcesses = new Map<string, ChildProcessWithoutNullStreams>();
+  private readonly cancelledProcesses = new WeakSet<ChildProcessWithoutNullStreams>();
 
   constructor(private readonly userDataDir: string) {}
 
@@ -23,7 +24,7 @@ export class DownloaderManager {
 
     const metadata = parseProbeJson(stdout);
     if (!metadata) {
-      throw new Error('yt-dlp did not return readable video metadata for this URL.');
+      throw new Error('The download tool did not return readable video metadata for this URL.');
     }
 
     return metadata;
@@ -32,7 +33,7 @@ export class DownloaderManager {
   async startDownload(request: Omit<DownloadRequest, 'ffmpegPath'>, onEvent: EventSink): Promise<void> {
     const ffmpegPath = getFfmpegPath();
     if (!ffmpegPath) {
-      throw new Error('ffmpeg could not be located. Reinstall the app or check the ffmpeg-static package.');
+      throw new Error('The media tool could not be located. Reinstall the app or check bundled dependencies.');
     }
 
     const ytDlpPath = await ensureYtDlp(this.userDataDir);
@@ -70,7 +71,18 @@ export class DownloaderManager {
     });
 
     child.on('close', (code) => {
-      this.activeProcesses.delete(jobId);
+      const isCurrentProcess = this.activeProcesses.get(jobId) === child;
+      if (isCurrentProcess) {
+        this.activeProcesses.delete(jobId);
+      }
+
+      if (this.cancelledProcesses.has(child)) {
+        this.cancelledProcesses.delete(child);
+        if (!this.activeProcesses.has(jobId)) {
+          onEvent({ jobId, status: 'cancelled' });
+        }
+        return;
+      }
 
       if (code === 0) {
         onEvent({ jobId, status: 'completed', progress: 100 });
@@ -85,7 +97,7 @@ export class DownloaderManager {
       onEvent({
         jobId,
         status: 'failed',
-        error: cleanError(stderr) || `yt-dlp exited with code ${code}.`
+        error: cleanError(stderr) || `The download tool exited with code ${code}.`
       });
     });
   }
@@ -96,6 +108,7 @@ export class DownloaderManager {
       return false;
     }
 
+    this.cancelledProcesses.add(child);
     child.kill();
     this.activeProcesses.delete(jobId);
     return true;

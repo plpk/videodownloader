@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertCircle, CheckCircle2, Download, FolderOpen, RefreshCw, ShieldCheck } from 'lucide-react';
 import type { AppSettings, DownloadEvent, ProbeResult, QueuedJob, ToolStatus } from '../../shared/types';
 import { Header } from './components/Header';
@@ -25,6 +25,7 @@ export default function App(): JSX.Element {
   const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
   const [busyMessage, setBusyMessage] = useState<string | null>('Loading app settings...');
   const [notice, setNotice] = useState<string | null>(null);
+  const cancelledJobIdsRef = useRef(new Set<string>());
 
   useEffect(() => {
     let mounted = true;
@@ -85,13 +86,13 @@ export default function App(): JSX.Element {
   }, [persistSettings, settings]);
 
   const installTools = useCallback(async () => {
-    setBusyMessage('Installing yt-dlp...');
+    setBusyMessage('Installing download tool...');
     try {
       const nextStatus = await window.downloader.installTools();
       setToolStatus(nextStatus);
-      setNotice('yt-dlp is installed and ready.');
+      setNotice('Download tool is installed and ready.');
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : 'Could not install yt-dlp.');
+      setNotice(error instanceof Error ? error.message : 'Could not install the download tool.');
     } finally {
       setBusyMessage(null);
     }
@@ -121,6 +122,7 @@ export default function App(): JSX.Element {
 
   const retryJob = useCallback(
     async (job: QueuedJob) => {
+      cancelledJobIdsRef.current.delete(job.id);
       setJobs((currentJobs) =>
         currentJobs.map((candidate) =>
           candidate.id === job.id
@@ -142,12 +144,27 @@ export default function App(): JSX.Element {
       try {
         const request = { ...jobSettings, id: job.id, url: job.url };
         const metadata = await window.downloader.probe(request);
+        if (cancelledJobIdsRef.current.has(job.id)) {
+          return;
+        }
+
         setJobs((currentJobs) =>
           currentJobs.map((candidate) => mergeMetadata(candidate, job.id, metadata, 'ready'))
         );
 
+        if (cancelledJobIdsRef.current.has(job.id)) {
+          return;
+        }
+
         await window.downloader.startDownload(request);
       } catch (error) {
+        if (cancelledJobIdsRef.current.has(job.id)) {
+          setJobs((currentJobs) =>
+            currentJobs.map((candidate) => (candidate.id === job.id ? { ...candidate, status: 'cancelled' } : candidate))
+          );
+          return;
+        }
+
         setJobs((currentJobs) =>
           currentJobs.map((candidate) =>
             candidate.id === job.id
@@ -165,7 +182,12 @@ export default function App(): JSX.Element {
   );
 
   const cancelJob = useCallback(async (jobId: string) => {
-    await window.downloader.cancelDownload(jobId);
+    cancelledJobIdsRef.current.add(jobId);
+    try {
+      await window.downloader.cancelDownload(jobId);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : 'Could not cancel the download.');
+    }
     setJobs((currentJobs) =>
       currentJobs.map((job) => (job.id === jobId ? { ...job, status: 'cancelled' } : job))
     );
@@ -280,6 +302,10 @@ function applyDownloadEvent(job: QueuedJob, event: DownloadEvent): QueuedJob {
     return job;
   }
 
+  if (job.status === 'cancelled' && event.status !== 'cancelled') {
+    return job;
+  }
+
   return {
     ...job,
     status: event.status ?? job.status,
@@ -296,8 +322,17 @@ function applyDownloadEvent(job: QueuedJob, event: DownloadEvent): QueuedJob {
   };
 }
 
-function mergeMetadata(job: QueuedJob, jobId: string, metadata: ProbeResult, status: QueuedJob['status']): QueuedJob {
+export function mergeMetadata(
+  job: QueuedJob,
+  jobId: string,
+  metadata: ProbeResult,
+  status: QueuedJob['status']
+): QueuedJob {
   if (job.id !== jobId) {
+    return job;
+  }
+
+  if (job.status === 'cancelled') {
     return job;
   }
 

@@ -1,10 +1,10 @@
-import { Chrome, DownloadCloud, KeyRound, Wrench } from 'lucide-react';
+import { DownloadCloud, KeyRound, MonitorDot, Wrench } from 'lucide-react';
 import type { AppSettings, BrowserChoice, ToolStatus } from '../../../shared/types';
 
 const browserOptions: Array<{ value: BrowserChoice; label: string }> = [
-  { value: 'chrome', label: 'Chrome' },
-  { value: 'edge', label: 'Edge' },
-  { value: 'firefox', label: 'Firefox' }
+  { value: 'chrome', label: 'Browser profile A' },
+  { value: 'edge', label: 'Browser profile B' },
+  { value: 'firefox', label: 'Browser profile C' }
 ];
 
 interface SettingsPanelProps {
@@ -71,7 +71,7 @@ export function SettingsPanel({
       </div>
 
       <div className="browser-note">
-        <Chrome size={17} />
+        <MonitorDot size={17} />
         <p>Close the selected browser if cookie extraction fails; some profiles lock cookie databases while open.</p>
       </div>
     </section>

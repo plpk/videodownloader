@@ -27,7 +27,7 @@ export function registerIpc(window: BrowserWindow, manager: DownloaderManager, u
   });
 
   ipcMain.handle('tools:install', async () => {
-    await ensureYtDlp(userDataDir);
+    await ensureYtDlp(userDataDir, { force: true });
     return await getToolStatus(userDataDir);
   });
 
