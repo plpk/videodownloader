@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-electron/
+out/
+release/
+.vite/
+.superpowers/
+coverage/
+artifacts/
+*.log
+*.tmp
+*.local
+downloads/
+user-data/
