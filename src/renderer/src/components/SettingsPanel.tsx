@@ -2,9 +2,11 @@ import { DownloadCloud, KeyRound, MonitorDot, Wrench } from 'lucide-react';
 import type { AppSettings, BrowserChoice, ToolStatus } from '../../../shared/types';
 
 const browserOptions: Array<{ value: BrowserChoice; label: string }> = [
-  { value: 'chrome', label: 'Browser profile A' },
-  { value: 'edge', label: 'Browser profile B' },
-  { value: 'firefox', label: 'Browser profile C' }
+  { value: 'chrome', label: 'Chrome' },
+  { value: 'safari', label: 'Safari' },
+  { value: 'firefox', label: 'Firefox' },
+  { value: 'brave', label: 'Brave' },
+  { value: 'edge', label: 'Edge' }
 ];
 
 interface SettingsPanelProps {
@@ -72,7 +74,10 @@ export function SettingsPanel({
 
       <div className="browser-note">
         <MonitorDot size={17} />
-        <p>Close the selected browser if cookie extraction fails; some profiles lock cookie databases while open.</p>
+        <p>
+          Close the selected browser if cookie extraction fails; some profiles lock cookie databases while open. On
+          macOS, Chrome-based browsers prompt for Keychain access and Safari needs Full Disk Access for this app.
+        </p>
       </div>
     </section>
   );

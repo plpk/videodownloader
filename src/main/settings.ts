@@ -35,10 +35,12 @@ export async function saveSettings(userDataDir: string, settings: AppSettings): 
 
 function normalizeSettings(settings: Partial<AppSettings>): AppSettings {
   const defaults = defaultSettings();
-  const quality = ['best', '2160', '1440', '1080', '720', '480', 'audio'].includes(settings.quality ?? '')
+  const quality = ['best', '2160', '1440', '1080', '720', '480', 'audio', 'audio-best'].includes(settings.quality ?? '')
     ? settings.quality
     : defaults.quality;
-  const browser = ['chrome', 'edge', 'firefox'].includes(settings.browser ?? '') ? settings.browser : defaults.browser;
+  const browser = ['chrome', 'edge', 'firefox', 'safari', 'brave'].includes(settings.browser ?? '')
+    ? settings.browser
+    : defaults.browser;
 
   return {
     outputDir: settings.outputDir || defaults.outputDir,

@@ -1,15 +1,16 @@
 # Video Downloader
 
-A polished Windows desktop app for downloading public and user-accessible videos from supported websites.
+A polished desktop app for downloading public and user-accessible videos from supported websites. Runs on Windows and macOS (Apple silicon).
 
-Video Downloader is built as a local Electron app. The interface handles URLs, folders, quality presets, browser-login options, and queue status; the downloader engine runs locally on your PC.
+Video Downloader is built as a local Electron app. The interface handles URLs, folders, quality presets, browser-login options, and queue status; the downloader engine runs locally on your machine.
 
 ## Features
 
 - Paste one URL or a batch of URLs.
 - Download public videos from supported sites.
 - Optional browser-cookie mode for videos you can already access in a supported browser.
-- Quality presets: Best, 4K, 1440p, 1080p, 720p, 480p, and MP3 audio.
+- Quality presets: Best (max resolution), 4K, 1440p, 1080p, 720p, 480p, MP3 audio, and original-quality audio.
+- Audio-only presets fetch an audio stream directly, so no video data is downloaded.
 - Queue view with status, progress, speed, ETA, cancel, retry, and open-folder actions.
 - On-demand download-tool install and refresh from the official release URL.
 - Bundled media conversion support.
@@ -45,6 +46,13 @@ For local builds, the portable Windows app is generated at:
 release/win-unpacked/Video Downloader.exe
 ```
 
+On macOS the build produces a disk image and an app bundle:
+
+```text
+release/Video Downloader-0.1.0-arm64.dmg
+release/mac-arm64/Video Downloader.app
+```
+
 A portable ZIP can be generated with:
 
 ```powershell
@@ -59,7 +67,18 @@ Requirements:
 
 - Node.js 20 or newer
 - npm
-- Windows for the packaged desktop app
+- Windows or macOS 12+ for the packaged desktop app (each platform builds its own installer)
+
+### Building on macOS
+
+```bash
+npm install
+npm run dist:mac
+```
+
+The build is ad-hoc signed so it launches locally without a developer account. It
+is deliberately not notarized, so it is meant for the machine that built it
+rather than for distribution.
 
 Install dependencies:
 
@@ -97,6 +116,23 @@ Verification used for the current branch:
 npm.cmd test
 npm.cmd run build
 ```
+
+## Max resolution and playback
+
+"Best (max resolution)" sorts available streams by resolution first, so it always
+takes the highest pixel count on offer. Above 1080p most sites only publish VP9 or
+AV1 video with Opus audio, so the merged result is written to `mp4` when those
+streams are legal in that container and to `mkv` when they are not, instead of
+forcing an mp4 remux that some players refuse to open. AV1 playback in QuickTime
+needs macOS 14 or newer. The 1080p preset stays on H.264/AAC if universal
+compatibility matters more than resolution.
+
+The downloader engine needs a JavaScript runtime to solve the signature
+challenges some sites use; without one it warns that formats may be missing,
+which can quietly cap resolution. Rather than downloading a separate runtime, the
+app writes a small shim that re-invokes its own Electron binary with
+`ELECTRON_RUN_AS_NODE=1`, which yt-dlp accepts as Node. This requires an Electron
+release bundling Node 22 or newer.
 
 ## Architecture
 

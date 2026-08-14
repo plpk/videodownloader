@@ -14,8 +14,9 @@ vi.mock('node:child_process', () => ({
 }));
 
 vi.mock('./tools', () => ({
-  ensureYtDlp: vi.fn(async () => 'C:\\Tools\\download-tool.exe'),
-  getFfmpegPath: vi.fn(() => 'C:\\Tools\\media-tool.exe')
+  ensureYtDlp: vi.fn(async () => '/opt/tools/download-tool'),
+  getFfmpegPath: vi.fn(() => '/opt/tools/media-tool'),
+  ensureJsRuntimeShim: vi.fn(async () => '/opt/tools/node-shim')
 }));
 
 import { DownloaderManager } from './manager';
@@ -38,7 +39,7 @@ function createRequest(): Omit<DownloadRequest, 'ffmpegPath'> {
   return {
     id: 'job-1',
     url: 'https://example.com/video',
-    outputDir: 'C:\\Downloads',
+    outputDir: '/Users/example/Downloads',
     quality: 'best',
     playlist: false,
     subtitles: false,
@@ -55,7 +56,7 @@ describe('DownloaderManager cancellation', () => {
   });
 
   it('emits cancelled instead of failed when a killed process closes with a non-zero code', async () => {
-    const manager = new DownloaderManager('C:\\UserData');
+    const manager = new DownloaderManager('/Users/example/Library/Application Support/vd');
     const events: DownloadEvent[] = [];
 
     await manager.startDownload(createRequest(), (event) => events.push(event));

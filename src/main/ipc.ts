@@ -1,7 +1,7 @@
 import { dialog, ipcMain, shell, type BrowserWindow } from 'electron';
 import type { AppSettings, DownloadRequest } from '../shared/types';
 import { DownloaderManager } from './downloader/manager';
-import { ensureYtDlp, getToolStatus } from './downloader/tools';
+import { ensureJsRuntimeShim, ensureYtDlp, getToolStatus } from './downloader/tools';
 import { loadSettings, saveSettings } from './settings';
 
 export function registerIpc(window: BrowserWindow, manager: DownloaderManager, userDataDir: string): void {
@@ -28,6 +28,7 @@ export function registerIpc(window: BrowserWindow, manager: DownloaderManager, u
 
   ipcMain.handle('tools:install', async () => {
     await ensureYtDlp(userDataDir, { force: true });
+    await ensureJsRuntimeShim(userDataDir);
     return await getToolStatus(userDataDir);
   });
 

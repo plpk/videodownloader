@@ -1,6 +1,6 @@
-export type QualityPreset = 'best' | '2160' | '1440' | '1080' | '720' | '480' | 'audio';
+export type QualityPreset = 'best' | '2160' | '1440' | '1080' | '720' | '480' | 'audio' | 'audio-best';
 
-export type BrowserChoice = 'chrome' | 'edge' | 'firefox';
+export type BrowserChoice = 'chrome' | 'edge' | 'firefox' | 'safari' | 'brave';
 
 export type JobStatus =
   | 'queued'
@@ -24,6 +24,8 @@ export interface DownloadRequest extends AppSettings {
   id?: string;
   url: string;
   ffmpegPath: string;
+  /** Path to a Node-compatible runtime yt-dlp can use for YouTube JS challenges. */
+  jsRuntimePath?: string | null;
 }
 
 export interface QueuedJob {
@@ -54,6 +56,7 @@ export interface ToolStatus {
   ytDlpInstalled: boolean;
   ytDlpPath: string;
   ffmpegPath: string | null;
+  jsRuntimePath: string | null;
 }
 
 export type ProgressEvent =

@@ -1,14 +1,15 @@
 {
   "name": "louis-video-downloader",
   "version": "0.1.0",
-  "description": "Polished Windows desktop downloader for public and user-accessible videos.",
+  "description": "Polished desktop downloader for public and user-accessible videos, for Windows and macOS.",
   "main": "dist/main/index.js",
   "author": "Louis",
   "license": "GPL-3.0-or-later",
   "keywords": [
     "video-downloader",
     "electron",
-    "windows"
+    "windows",
+    "macos"
   ],
   "homepage": "https://github.com/plpk/videodownloader#readme",
   "repository": {
@@ -23,6 +24,7 @@
     "dev": "electron-vite dev",
     "build": "tsc --noEmit && electron-vite build",
     "dist": "npm run build && electron-builder --win nsis",
+    "dist:mac": "npm run build && electron-builder --mac dmg",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit"
@@ -38,8 +40,8 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "electron": "^33.2.1",
-    "electron-builder": "^25.1.8",
+    "electron": "^43.4.0",
+    "electron-builder": "^26.15.3",
     "electron-vite": "^2.3.0",
     "typescript": "^5.7.2",
     "vite": "^5.4.11",
@@ -48,6 +50,7 @@
   "build": {
     "appId": "com.louis.videodownloader",
     "productName": "Video Downloader",
+    "afterPack": "./scripts/after-pack.cjs",
     "directories": {
       "output": "release"
     },
@@ -62,6 +65,24 @@
     "win": {
       "target": "nsis",
       "signAndEditExecutable": false
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.utilities",
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false,
+      "identity": null,
+      "notarize": false
+    },
+    "dmg": {
+      "writeUpdateInfo": false
     },
     "nsis": {
       "oneClick": false,
