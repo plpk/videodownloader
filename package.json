@@ -1,6 +1,6 @@
 {
   "name": "louis-video-downloader",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Polished desktop downloader for public and user-accessible videos, for Windows and macOS.",
   "main": "dist/main/index.js",
   "author": "Louis",

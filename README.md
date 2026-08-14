@@ -49,9 +49,12 @@ release/win-unpacked/Video Downloader.exe
 On macOS the build produces a disk image and an app bundle:
 
 ```text
-release/Video Downloader-0.1.0-arm64.dmg
+release/Video Downloader-0.2.0-arm64.dmg
 release/mac-arm64/Video Downloader.app
 ```
+
+macOS install steps, including the one-time fix for the "app is damaged"
+Gatekeeper message, are in [docs/INSTALL-macos.md](docs/INSTALL-macos.md).
 
 A portable ZIP can be generated with:
 
