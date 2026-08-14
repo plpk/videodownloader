@@ -75,7 +75,11 @@ function isAudioOnly(quality: DownloadRequest['quality']): boolean {
 
 function formatSelectorFor(quality: DownloadRequest['quality']): string {
   if (quality === 'best') {
-    return 'bv*+ba/b';
+    // Highest resolution that editors handle natively. Above 1080p most sites
+    // only publish VP9/AV1, which import badly into Final Cut and Premiere, so
+    // prefer H.264 + AAC and only fall back to other codecs when a site offers
+    // nothing else.
+    return 'bv*[vcodec^=avc1]+ba[acodec^=mp4a]/bv*[vcodec^=avc1]+ba/b[vcodec^=avc1]/bv*+ba/b';
   }
 
   return `bv*[height<=${quality}]+ba/b[height<=${quality}]/best[height<=${quality}]`;

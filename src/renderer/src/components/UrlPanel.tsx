@@ -2,10 +2,10 @@ import { Download, FolderOpen, ListVideo } from 'lucide-react';
 import type { AppSettings, QualityPreset } from '../../../shared/types';
 
 const qualityOptions: Array<{ value: QualityPreset; label: string }> = [
-  { value: 'best', label: 'Best (max resolution)' },
-  { value: '2160', label: '4K' },
+  { value: 'best', label: 'Best (edit-friendly)' },
+  { value: '2160', label: '4K (max resolution)' },
   { value: '1440', label: '1440p' },
-  { value: '1080', label: '1080p (H.264, plays anywhere)' },
+  { value: '1080', label: '1080p' },
   { value: '720', label: '720p' },
   { value: '480', label: '480p' },
   { value: 'audio', label: 'Audio — MP3' },

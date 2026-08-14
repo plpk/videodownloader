@@ -19,9 +19,41 @@ describe('buildDownloadArgs', () => {
     expect(args).toContain('/opt/tools/ffmpeg');
     expect(args).toContain('--merge-output-format');
     expect(args).toContain('mp4/mkv');
-    expect(args).toContain('bv*+ba/b');
+    expect(args).toContain('bv*[vcodec^=avc1]+ba[acodec^=mp4a]/bv*[vcodec^=avc1]+ba/b[vcodec^=avc1]/bv*+ba/b');
     expect(args).not.toContain('--cookies-from-browser');
     expect(args.at(-1)).toBe('https://example.com/watch/abc123');
+  });
+
+  it('prefers H.264 for best but still falls back when a site has no H.264', () => {
+    const args = buildDownloadArgs({
+      url: 'https://example.com/watch/abc123',
+      outputDir: '/Users/example/Movies',
+      quality: 'best',
+      playlist: false,
+      subtitles: false,
+      useBrowserCookies: false,
+      browser: 'chrome',
+      ffmpegPath: '/opt/tools/ffmpeg'
+    });
+
+    const selector = args[args.indexOf('-f') + 1];
+    expect(selector.startsWith('bv*[vcodec^=avc1]')).toBe(true);
+    expect(selector.endsWith('/bv*+ba/b')).toBe(true);
+  });
+
+  it('leaves the explicit height presets unrestricted by codec', () => {
+    const args = buildDownloadArgs({
+      url: 'https://example.com/watch/abc123',
+      outputDir: '/Users/example/Movies',
+      quality: '2160',
+      playlist: false,
+      subtitles: false,
+      useBrowserCookies: false,
+      browser: 'chrome',
+      ffmpegPath: '/opt/tools/ffmpeg'
+    });
+
+    expect(args[args.indexOf('-f') + 1]).not.toContain('avc1');
   });
 
   it('sorts by resolution first so best means highest resolution', () => {
