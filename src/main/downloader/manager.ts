@@ -3,7 +3,7 @@ import { dirname } from 'node:path';
 import type { DownloadEvent, DownloadRequest, ProbeResult } from '../../shared/types';
 import { buildDownloadArgs, buildProbeArgs } from './args';
 import { parseProgressLine } from './progress';
-import { ensureYtDlp, getFfmpegPath } from './tools';
+import { ensureJsRuntimeShim, ensureYtDlp, getFfmpegPath } from './tools';
 
 type EventSink = (event: DownloadEvent) => void;
 
@@ -15,7 +15,8 @@ export class DownloaderManager {
 
   async probe(request: Omit<DownloadRequest, 'ffmpegPath'>): Promise<ProbeResult> {
     const ytDlpPath = await ensureYtDlp(this.userDataDir);
-    const args = buildProbeArgs(request);
+    const jsRuntimePath = await ensureJsRuntimeShim(this.userDataDir);
+    const args = buildProbeArgs({ ...request, jsRuntimePath });
     const { stdout, stderr, code } = await runProcess(ytDlpPath, args);
 
     if (code !== 0) {
@@ -37,8 +38,9 @@ export class DownloaderManager {
     }
 
     const ytDlpPath = await ensureYtDlp(this.userDataDir);
+    const jsRuntimePath = await ensureJsRuntimeShim(this.userDataDir);
     const jobId = request.id ?? crypto.randomUUID();
-    const args = buildDownloadArgs({ ...request, ffmpegPath });
+    const args = buildDownloadArgs({ ...request, ffmpegPath, jsRuntimePath });
     const child = spawn(ytDlpPath, args, {
       cwd: dirname(ytDlpPath),
       windowsHide: true
